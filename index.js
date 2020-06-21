@@ -4,6 +4,8 @@ const cells = 3;
 const width = 600;
 const height = 600;
 
+const unitLength = width / cells;
+
 
 const engine = Engine.create();
 const { world } = engine;
@@ -23,10 +25,10 @@ Runner.run(Runner.create(), engine);
 
 //Walls
 const walls = [
-  Bodies.rectangle(width / 2, 0, width, 40, {isStatic: true}),
-  Bodies.rectangle(width / 2, height, width, 40, {isStatic: true}),
-  Bodies.rectangle(0, height /2, 40, height, {isStatic: true}),
-  Bodies.rectangle(width, height / 2, 40, height, {isStatic: true})
+  Bodies.rectangle(width / 2, 0, width, 2, {isStatic: true}),
+  Bodies.rectangle(width / 2, height, width, 2, {isStatic: true}),
+  Bodies.rectangle(0, height /2, 2, height, {isStatic: true}),
+  Bodies.rectangle(width, height / 2, 2, height, {isStatic: true})
 ];
 World.add(world, walls);
 
@@ -91,9 +93,56 @@ const stepThroughCell = (row, column) => {
 
         stepThroughCell(nextRow, nextColumn);
     }
-
-
 }
 
 stepThroughCell(startRow, startColumn);
 
+horizontals.forEach((row, rowIndex) => {
+    row.forEach((open, columnIndex) => {
+        if(open === true){
+            return;
+        }
+        const wall = Bodies.rectangle(
+            columnIndex * unitLength + unitLength / 2,
+            rowIndex * unitLength + unitLength,
+            unitLength,
+            5,
+            {
+                isStatic: true
+            }
+        );
+        World.add(world, wall);
+    });
+});
+
+verticals.forEach((row, rowIndex) => {
+    row.forEach((open, columnIndex) => {
+        if(open){
+            return;
+        }
+        const wall = Bodies.rectangle(
+            columnIndex * unitLength + unitLength,
+            rowIndex * unitLength + unitLength / 2,
+            5,
+            unitLength,
+            {
+                isStatic: true
+            }
+        );
+        World.add(world, wall);
+    });
+});
+
+// Goal
+
+const goal = Bodies.rectangle(
+    width - unitLength / 2,
+    height - unitLength / 2,
+    unitLength * 0.6,
+    unitLength * 0.6,
+    {
+        isStatic: true
+    }
+);
+
+World.add(world, goal);
